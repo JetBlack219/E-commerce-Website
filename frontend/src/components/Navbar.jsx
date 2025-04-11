@@ -6,10 +6,14 @@ import profileIcon from '../assets/profileIcon.png'
 import cart from '../assets/cart.png'
 import menu from '../assets/menu.png'
 import dropdownIcon from '../assets/dropdownIcon.png'
+import { useContext } from 'react'
+import { ShopContext } from '../context/ShopContext'
 
 const Navbar = () => {
 
     const [visible, setVisible] = useState(false)
+
+    const {setShowSearch} = useContext(ShopContext)
 
   return (
     <div className='flex items-center justify-between font-medium'>
@@ -33,7 +37,7 @@ const Navbar = () => {
             </NavLink>
         </ul>
         <div className='flex items-center gap-6'>
-            <img src={search} className='w-5 cursor-pointer' alt=''/>
+            <img onClick={() => setShowSearch(true)} src={search} className='w-5 cursor-pointer' alt=''/>
 
             <div className='group relative'>
                 <img src = {profileIcon} className='w-5 cursor-pointer' alt=''/>
