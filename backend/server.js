@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import 'dotenv/config';
 import connectDB from "./config/mongodb.js";
+import connectCloudinary from "./config/cloudinary.js";
+import userRouter from "./routes/userRoute.js";
+import productRouter from "./routes/productRouter.js";
 
 // App Config
 const app = express();
@@ -22,3 +25,10 @@ connectDB().then(() => {
 }).catch(err => {
     console.error("Failed to start server:", err);
 });
+
+// Connect Cloudinary
+connectCloudinary()
+
+// API endpoints
+app.use('/api/user', userRouter)
+app.use('/api/product', productRouter)
