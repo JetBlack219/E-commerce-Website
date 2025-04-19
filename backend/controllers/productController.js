@@ -41,7 +41,7 @@ const addProduct = async (req, res) => {
         console.log(name, description, price, category, subCategory, sizes, bestseller);
         console.log(imageUrl);
 
-        res.json({ success: true, message: "Product data received and saved" });
+        res.json({ success: true, message: "Product Saved" });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
