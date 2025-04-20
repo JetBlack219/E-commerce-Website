@@ -70,7 +70,7 @@ const Collection = () => {
   // Reapply filters and sort when dependencies change
   useEffect(() => {
     applyFilter()
-  }, [category, subCategory, search, showSearch, sortType])
+  }, [category, subCategory, search, showSearch, sortType, products])
 
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10">
