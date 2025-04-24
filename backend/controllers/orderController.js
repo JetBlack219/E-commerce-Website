@@ -1,37 +1,26 @@
 import orderModel from "../models/orderModel.js";
-import userModel from "../models/userModel.js";
 
 // Placing orders using COD Method
 const placeOrder = async (req, res) => {
     try {
-        const { userId, items, amount, address } = req.body;
+        const { userId, items, amount, address, paymentMethod } = req.body;
 
-        // Validate required fields
-        if (!userId || !items || !amount) {
-            return res.status(400).json({ success: false, message: "Missing required fields" });
-        }
-
-        const orderData = {
+        // Create new order with all data including address
+        const newOrder = new orderModel({
             userId,
             items,
             amount,
-            address: address || {},
-            paymentMethod: "COD",
-            payment: false,
-            date: Date.now(),
-            status: "Order Placed"
-        };
+            address, // Make sure this is included
+            paymentMethod: paymentMethod.toUpperCase(),
+            payment: paymentMethod.toLowerCase() === 'cod' ? false : true,
+            date: Date.now()
+        });
 
-        const newOrder = new orderModel(orderData);
         await newOrder.save();
-
-        await userModel.findByIdAndUpdate(userId, { cartData: {} });
-        
-        res.json({ success: true, message: "Order Placed", order: newOrder });
-
+        res.json({ success: true, message: "Order placed successfully" });
     } catch (error) {
-        console.error("Order placement error:", error);
-        res.status(500).json({ success: false, message: error.message });
+        console.log(error);
+        res.json({ success: false, message: error.message });
     }
 };
 
@@ -47,12 +36,26 @@ const placeOrderRazorpay = async(req, res) => {
 
 // All Orders data for the admin panel
 const allOrders = async(req, res) => {
-
+    try {
+        const orders = await orderModel.find({})
+        res.json({success: true, orders})
+    } catch (error) {
+        console.log(error);
+        res.json({success: false, message: error.message})
+        
+    }
 }
 
 // User Order data for frontend
 const userOrders = async(req, res) => {
-
+    try {
+        const {userId} = req.body
+        const orders = await orderModel.find({userId})
+        res.json({success: true, orders})
+    } catch (error) {
+        console.log(error)
+        res.json({success: false, message: error.message})
+    }
 }
 
 //  Update Orders Status from Admin Panel

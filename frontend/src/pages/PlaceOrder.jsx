@@ -7,9 +7,8 @@ import { toast } from 'react-toastify'
 import axios from 'axios'
 
 const PlaceOrder = () => {
-
-  const[method, setMethod] = useState('cod');
-  const {navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, deliveryFee, products } = useContext(ShopContext)
+  const [method, setMethod] = useState('cod');
+  const {navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, deliveryFee, products, userId} = useContext(ShopContext)
   const [formData, setFormData] = useState({
     firstName:'',
     lastName:'',
@@ -23,24 +22,43 @@ const PlaceOrder = () => {
   })
 
   const onChangeHandler = (event) => {
-    const name = event.target.name
-    const value = event.target.value
-    
+    const { name, value } = event.target
     setFormData(data => ({...data, [name]: value}))
   }
 
   const onSubmitHandler = async(event) => {
     event.preventDefault()
     try {
+      // Validate all address fields
+      const requiredFields = ['firstName', 'lastName', 'email', 'street', 'city', 'state', 'zipcode', 'country', 'phone']
+      const missingFields = requiredFields.filter(field => !formData[field])
+      
+      if (missingFields.length > 0) {
+        toast.error(`Please fill in all required fields: ${missingFields.join(', ')}`);
+        return;
+      }
+
+      // Validate phone number
+      if (formData.phone.length < 10) {
+        toast.error("Phone number must be at least 10 digits");
+        return;
+      }
+
+      // Validate zipcode
+      if (formData.zipcode.length < 4) {
+        toast.error("Zipcode must be valid");
+        return;
+      }
+
       let orderItems = []
   
-      for(const items in cartItems){
-        for(const item in cartItems[items]){
-          if(cartItems[items][item] > 0){
-            const itemInfo = structuredClone(products.find(product => product._id === items))
+      for(const itemId in cartItems){
+        for(const size in cartItems[itemId]){
+          if(cartItems[itemId][size] > 0){
+            const itemInfo = structuredClone(products.find(product => product._id === itemId))
             if(itemInfo){
-              itemInfo.size = item
-              itemInfo.quantity = cartItems[items][item]
+              itemInfo.size = size
+              itemInfo.quantity = cartItems[itemId][size]
               orderItems.push(itemInfo)
             }
           }
@@ -49,25 +67,26 @@ const PlaceOrder = () => {
   
       // Create address object
       const address = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        street: formData.street,
-        city: formData.city,
-        state: formData.state,
-        zipcode: formData.zipcode.toString(),
-        country: formData.country,
-        phone: formData.phone.toString()
-      }
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        street: formData.street.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        zipcode: formData.zipcode.toString().trim(),
+        country: formData.country.trim(),
+        phone: formData.phone.toString().trim()
+      };
+
   
-      let orderData = {
-        userId: formData,
+      const orderData = {
+        userId: userId,
         items: orderItems,
         amount: getCartAmount() + deliveryFee,
-        address: address, 
-        paymentMethod: method.toUpperCase(), 
+        address: address,
+        paymentMethod: method.toUpperCase(),
         date: Date.now()
-      }
+    };
   
       switch(method){
         case 'cod':
@@ -92,7 +111,7 @@ const PlaceOrder = () => {
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
       {/* Left Side */}
-      <div className="flex flex-col gap-4 w-fullsm:max-w-[480px]">
+      <div className="flex flex-col gap-4 w-full sm:max-w-[480px]">
         <div className="text-sl sm:text-2xl my-3">
           <Title text1={'DELIVERY '} text2={'INFORMATION'}/>
         </div>
