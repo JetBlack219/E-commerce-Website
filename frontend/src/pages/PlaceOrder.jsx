@@ -98,7 +98,20 @@ const PlaceOrder = () => {
           } else{
             toast.error(response.data.message)
           }
-          break
+          break;
+
+        case 'stripe':
+          const responseStripe = await axios.post(`${backendUrl}/api/order/stripe`, orderData, {headers: {token}})
+          if(responseStripe.data.success){
+            const {session_url} = responseStripe.data
+            window.location.replace(session_url)
+            // setCartItems({})
+            // navigate("/order")
+            // toast.success("Order placed successfully!")
+          } else{
+            toast.error(responseStripe.data.message)
+          }
+          break;
         default:
           break
       }
