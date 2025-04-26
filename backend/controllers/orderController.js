@@ -1,6 +1,6 @@
 import orderModel from "../models/orderModel.js";
 import Stripe from 'stripe';
-import userModel from "../models/userModel.js";  // Fixed path and added .js extension
+import userModel from "../models/userModel.js";
 
 // Global Variables
 const currency = 'USD';

@@ -6,6 +6,7 @@ import { backendUrl, currency } from "./../App";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
 import cash_icon from '../assets/cash_icon.png'
+import stripe_icon from '../assets/stripe_icon.png'
 
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
@@ -22,8 +23,7 @@ const Orders = ({ token }) => {
         { headers: { token } }
       );
       if (response.data.success) {
-        setOrders(response.data.orders);
-      } else {
+        setOrders(response.data.data || []);
         toast.error(response.data.message);
       }
     } catch (error) {
@@ -44,7 +44,7 @@ const Orders = ({ token }) => {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const response = await axios.post(
-        `${backendUrl}/api/order/status`,
+        `${backendUrl}/api/order/status`, // Fixed template literal
         { orderId, status: newStatus },
         { headers: { token } }
       );
@@ -69,7 +69,7 @@ const Orders = ({ token }) => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Your Orders</h1>
       
-      {orders.length === 0 ? (
+      {!orders || orders.length === 0 ? ( // Added check for !orders
         <div className="text-center py-12">
           <img src={assets.empty_order} alt="No orders" className="w-48 mx-auto mb-6" />
           <h3 className="text-xl font-medium text-gray-700">No orders found</h3>
@@ -160,13 +160,12 @@ const Orders = ({ token }) => {
                         </>
                       ) : order.paymentMethod === 'STRIPE' ? (
                         <>
-                          <img src={assets.stripe_logo} alt="Stripe" className="h-5 mr-2" />
+                          <img src={stripe_icon} alt="Stripe" className="h-5 mr-2" />
                           <span className="text-sm">Credit/Debit Card</span>
                         </>
                       ) : (
                         <>
-                          <img src={assets.razorpay_logo} alt="Razorpay" className="h-5 mr-2" />
-                          <span className="text-sm">Razorpay</span>
+    
                         </>
                       )}
                     </div>

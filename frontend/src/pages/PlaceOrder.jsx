@@ -124,7 +124,7 @@ const PlaceOrder = () => {
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
       {/* Left Side */}
-      <div className="flex flex-col gap-4 w-full sm:max-w-[480px]">
+      <div className="flex flex-col gap-4 w-full sm:max-w-[680px]">
         <div className="text-sl sm:text-2xl my-3">
           <Title text1={'DELIVERY '} text2={'INFORMATION'}/>
         </div>
@@ -147,7 +147,7 @@ const PlaceOrder = () => {
 
       {/* Right Side */}
       <div className="mt-8">
-        <div className="mt-8 min-w-80">
+        <div className="mt-8 min-w-20">
           <CartTotal/>
         </div>
         <div className="mt-12">
@@ -157,10 +157,6 @@ const PlaceOrder = () => {
             <div onClick={() => setMethod('stripe')} className="flex items-center gap-3 border p-2 px-3 cursor-pointer">
               <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'stripe' ? 'bg-green-400' : ''}`}></p>
               <img className='h-5 mx-4' src={assets.stripe_logo} alt="" />
-            </div>
-            <div onClick={() => setMethod('razorpay')} className="flex items-center gap-3 border p-2 px-3 cursor-pointer">
-              <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'razorpay' ? 'bg-green-400' : ''}`}></p>
-              <img className='h-5 mx-4' src={assets.razorpay_logo} alt="" />
             </div>
             <div onClick={() => setMethod('cod')} className="flex items-center gap-3 border p-2 px-3 cursor-pointer">
               <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'cod' ? 'bg-green-400' : ''}`}></p>
